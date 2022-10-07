@@ -1,5 +1,7 @@
 import sys
 from tools import file
+from tools import notepad
+from tools import listhandle
 import os
 import tqdm
 import json
@@ -120,9 +122,12 @@ class File(object):
     def read(self) -> str:
         with open(self.absolute_path, 'r') as f:
             result = f.readlines()
+            content = ""
             for line in result:
-                self.contents += line + "\n"
+                content += line
             f.close()
+        self.contents = content
+        del content
         return self.contents
         # TODO:finish reading files
 
@@ -130,7 +135,20 @@ class File(object):
         print("notepad '{}'".format(self.absolute_path))
         os.system("{} '{}'".format(default_file_editor, self.absolute_path))
 
+    # TODO:FINISH The \n bug
+    def notepad(self) -> None:
+        self.read()
+        print('start', list(self.contents), 'end')
+        notebook = notepad.Notepad(self.contents)
+        notebook.get_root().mainloop()
+        self.contents = notebook.get_result()
+
+        self.write_self()
+        del notebook
+
     def write_self(self) -> None:
+        if not self.contents:
+            raise Exception("")
         with open(self.absolute_path, 'w') as f:
             f.write(self.contents)
 
@@ -143,6 +161,6 @@ if __name__ == '__main__':
     TF = File(name="test_file", path=TP, extension=".txt")
     TF.read()
     print('contents', TF.contents)
-    TF.edit()
+    TF.notepad()
     TF.read()
     print('contents', TF.contents)

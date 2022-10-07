@@ -6,9 +6,8 @@ class Notepad(object):
         self.result = None
         self.text = text
         self.root = tkinter.Tk()
-        self.variable = tkinter.Variable(self.root)
-        self.variable.set(self.text)
-        self.entry = tkinter.Entry(self.root, textvariable=self.variable)
+        self.entry = tkinter.Text(self.root, exportselection=False)
+        self.entry.insert("insert", self.text)
         self.entry.pack()
         self.button = tkinter.Button(self.root, text="save", command=self.save)
         self.button.pack()
@@ -17,7 +16,7 @@ class Notepad(object):
         return self.root
 
     def save(self) -> None:
-        self.result = self.entry.get()
+        self.result = self.entry.get('1.0', tkinter.END)
         self.root.destroy()
 
     def get_result(self) -> str:
@@ -25,5 +24,6 @@ class Notepad(object):
 
 
 if __name__ == '__main__':
-    notepad = Notepad("小胖子")
-    print(notepad.get_root().mainloop())
+    notepad = Notepad("小胖子\nabc")
+    notepad.get_root().mainloop()
+    print(notepad.get_result().rstrip(), 'end')
